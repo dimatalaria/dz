@@ -12,12 +12,12 @@ class Task:
         self.status: bool = False
 
     @staticmethod
-    def read_file(file: str):
-        with open(file, 'r', encoding='utf-8') as file:
+    def read_file(file_name: str):
+        with open(file_name, 'r', encoding='utf-8') as file:
             tasks = json.load(file)
         return tasks
 
-    def create_task(self, file):
+    def create_task(self, file_name):
         task = {
             "ID задачи": self.task_id,
             "Название": self.name,
@@ -25,18 +25,19 @@ class Task:
         }
 
         try:
-            with open(file, 'r', encoding='utf-8') as file:
+            with open(file_name, 'r', encoding='utf-8') as file:
                 tasks = json.load(file)
         except (FileNotFoundError, json.JSONDecodeError):
             tasks = []
 
         tasks.append(task)
 
-        with open(file, 'w', encoding='utf-8') as file:
+        with open(file_name, 'w', encoding='utf-8') as file:
             json.dump(tasks, file, ensure_ascii=False, indent=4)
 
         return f"Задача успешно создана: {task}"
 
+    def put_task(self, file_name):
 
 @app.get("/tasks")
 def get_tasks():
@@ -48,6 +49,7 @@ def get_tasks():
 def create_task(id_task: int, name: str):
     result = Task(id_task, name)
     return result.create_task("tasks_file.json")
+
 
 @app.put("/tasks/{task_id}")
 def update_task(task_id: int, name: str, status: bool):
